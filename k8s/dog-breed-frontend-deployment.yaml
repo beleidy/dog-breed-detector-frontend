@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dog-breed-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dog-breed-frontend
+  template:
+    metadata:
+      labels:
+        app: dog-breed-frontend
+    spec:
+      containers:
+        - name: dog-breed-frontend-app
+          image: eu.gcr.io/portfolio-230113/dog-breed-frontend
+          env:
+            - name: DETECTOR_ADDRESS
+              value: "https://k8.amr.elbeleidy.me/dogs/detect"
+          resources:
+            requests:
+              cpu: "25m"
