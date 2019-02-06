@@ -17,7 +17,7 @@ spec:
           image: eu.gcr.io/portfolio-230113/dog-breed-frontend
           env:
             - name: DETECTOR_ADDRESS
-              value: "https://k8.amr.elbeleidy.me/dogs/detect"
+              value: "https://dogs.amr.elbeleidy.me/detect"
           resources:
             requests:
               cpu: "25m"
