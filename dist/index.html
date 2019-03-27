@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Dog Breed Detector</title>
+    <link href="/styles.4b6ce5e3.css" rel="stylesheet">
+  <script src="/styles.4b6ce5e3.js"></script></head>
+  <body>
+    <div class="container-sm max-w-3xl mx-auto py-4 px-8">
+      <div class="title font-header text-center text-header-color mx-auto p-2">
+        <h1 class="mx-auto py-4 bg-my-blue rounded-lg">
+          dog breed detector
+        </h1>
+      </div>
+
+      <label id="dog-image-dropzone" for="image" class="block text-grey-darker my-4 mx-auto py-32 border-4 border-dashed border-my-orange w-2/3 text-center bg-cover bg-center bg-no-repeat" ondrop="dropHandler(event)" ondragover="dragoverHadler(event)">Click or drop a file to upload your dog's photo</label>
+      <input type="file" name="image" id="image" accept="image/*" class="hidden" onchange="clickHandler(event)">
+
+      <button id="detect-button" onclick="sendImage(event)" class="block w-1/3 mx-auto my-8 bg-my-purple hover:shadow-md focus:shadow-outline focus:outline-none font-content text-content-color font-bold py-2 px-4 rounded text-center">
+        detect
+      </button>
+      <button id="detect-another-button" onclick="detectAnother(event)" class="hidden block w-1/3 mx-auto my-8 bg-my-green hover:shadow-md focus:shadow-outline focus:outline-none font-content text-content-color font-bold py-2 px-4 rounded text-center">
+        detect another
+      </button>
+      <div id="result" class="hidden w-1/2 mx-auto py-4 text-center bg-my-orange shadow-outline"></div>
+    </div>
+  </body>
+  <script>var init = function () {
+  window.ondragover = function (event) {
+    return event.preventDefault();
+  };
+
+  window.ondrop = function (event) {
+    return event.preventDefault();
+  };
+}();
+
+var imageFileElement = document.getElementById("image");
+var dropzone = document.getElementById("dog-image-dropzone");
+var resultPane = document.getElementById("result");
+var detectButton = document.getElementById("detect-button");
+var detectAnotherButton = document.getElementById("detect-another-button");
+
+function clickHandler(e) {
+  dropzone.textContent = "                                    ";
+  dropzone.style.backgroundImage = "url(\"".concat(URL.createObjectURL(imageFileElement.files[0]), "\")");
+}
+
+function dropHandler(e) {
+  e.preventDefault();
+  console.log("drop handler fired");
+  var imageFileList = e.dataTransfer.files;
+  console.log(imageFileList);
+  imageFileElement.files = imageFileList;
+  clickHandler(e);
+}
+
+function dragoverHadler(e) {
+  e.preventDefault();
+  var lastTimeout;
+  console.log("dragover handler fired");
+  dropzone.className = dropzone.className.replace("border-4", "border-8");
+  if (lastTimeout) clearTimeout(lastTimeout);
+  lastTimeout = setTimeout(function () {
+    dropzone.className = dropzone.className.replace("border-8", "border-4");
+  }, 1000);
+}
+
+function sendImage(e) {
+  e.preventDefault();
+  var data = new FormData();
+  data.append("image", imageFileElement.files[0]);
+  fetch("REPLACE_DETECTOR_ADDRESS", {
+    // "REPLACE_DETECTOR_ADDRESS"
+    // "https://dogs.amr.elbeleidy.me/detect"
+    method: "POST",
+    body: data
+  }).then(function (response) {
+    return response.json();
+  }).then(function (responseJSON) {
+    detectButton.className = detectButton.className + " hidden";
+    detectAnotherButton.className = detectAnotherButton.className.replace("hidden", "");
+    resultPane.textContent = "It looks like it's a " + responseJSON.breed_detected;
+    resultPane.className = resultPane.className.replace("hidden", "");
+  }).catch(function (error) {
+    return console.log(error);
+  });
+}
+
+function detectAnother(e) {
+  detectAnotherButton.className = detectAnotherButton.className + " hidden";
+  resultPane.className = resultPane.className + " hidden";
+  detectButton.className = detectButton.className.replace("hidden", "");
+  imageFileElement.files = null;
+  dropzone.style.backgroundImage = "";
+  dropzone.textContent = "Click or drop a file to upload your dog's photo";
+}</script>
+</html>
