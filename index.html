@@ -55,7 +55,7 @@
       </button>
       <div
         id="result"
-        class="hidden w-1/2 mx-auto py-4 text-center bg-my-orange shadow-outline whitespace-pre-line"
+        class="hidden w-1/2 mx-auto py-4 text-center shadow-outline whitespace-pre-line"
       ></div>
     </div>
   </body>
@@ -114,26 +114,42 @@
         .then(response => response.json())
         .then(responseJSON => {
           if ("error" in responseJSON) {
-            displayResult("Something went wrong!\n" + responseJSON["error"]);
+            displayResult(
+              "Something went wrong!\n" + responseJSON["error"],
+              true
+            );
           } else if ("breed" in responseJSON) {
             displayResult("It looks like it's a\n" + responseJSON["breed"]);
           } else {
             displayResult(
-              "Something went wrong!\n" + "but we don't know what it is!"
+              "Something went wrong!\n" + "but we don't know what it is!",
+              true
             );
           }
         })
         .catch(error => {
           displayResult(
-            "Something went wrong!\n" + "but we don't know what it is!"
+            "Something went wrong!\n" + "but we don't know what it is!",
+            true
           );
         });
     }
 
-    function displayResult(message) {
+    function displayResult(message, err = false) {
       spinner.className = spinner.className + " hidden";
       detectButton.className = detectButton.className + " hidden";
       detectButton.innerText = "detect";
+      if (err) {
+        resultPane.className = resultPane.className.replace(
+          "hidden",
+          "bg-red-lighter"
+        );
+      } else {
+        resultPane.className = resultPane.className.replace(
+          "hidden",
+          "bg-my-green"
+        );
+      }
       detectAnotherButton.className = detectAnotherButton.className.replace(
         "hidden",
         ""
@@ -143,7 +159,9 @@
     }
     function detectAnother(e) {
       detectAnotherButton.className = detectAnotherButton.className + " hidden";
-      resultPane.className = resultPane.className + " hidden";
+      resultPane.className = resultPane.className
+        .replace("bg-my-green", "hidden")
+        .replace("bg-red-lighter", "hidden");
       detectButton.className = detectButton.className.replace("hidden", "");
       detectButton.disabled = false;
       imageFileElement.value = "";
