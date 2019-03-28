@@ -119,7 +119,7 @@
           if ("error" in responseJSON) {
             displayResult("Something went wrong!\n" + responseJSON["error"]);
           } else if ("breed" in responseJSON) {
-            displayResult("It looks like it's a\n" + responseJSON["error"]);
+            displayResult("It looks like it's a\n" + responseJSON["breed"]);
           } else {
             displayResult(
               "Something went wrong!\n" + "but we don't know what it is!"
