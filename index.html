@@ -84,9 +84,7 @@
 
     function dropHandler(e) {
       e.preventDefault();
-      console.log("drop handler fired");
       const imageFileList = e.dataTransfer.files;
-      console.log(imageFileList);
       imageFileElement.files = imageFileList;
       clickHandler(e);
     }
@@ -94,7 +92,6 @@
     function dragoverHadler(e) {
       e.preventDefault();
       let lastTimeout;
-      console.log("dragover handler fired");
       dropzone.className = dropzone.className.replace("border-4", "border-8");
       if (lastTimeout) clearTimeout(lastTimeout);
       lastTimeout = setTimeout(() => {
