@@ -55,7 +55,7 @@
       </button>
       <div
         id="result"
-        class="hidden w-1/2 mx-auto py-4 text-center bg-my-orange shadow-outline"
+        class="hidden w-1/2 mx-auto py-4 text-center bg-my-orange shadow-outline whitespace-pre-line"
       ></div>
     </div>
   </body>
@@ -116,22 +116,33 @@
       })
         .then(response => response.json())
         .then(responseJSON => {
-          spinner.className = spinner.className + " hidden";
-          detectButton.className = detectButton.className + " hidden";
-          detectButton.innerText = "detect";
-          detectAnotherButton.className = detectAnotherButton.className.replace(
-            "hidden",
-            ""
-          );
-          resultPane.textContent =
-            "It looks like it's a " + responseJSON.breed_detected;
-          resultPane.className = resultPane.className.replace("hidden", "");
+          if ("error" in responseJSON) {
+            displayResult("Something went wrong!\n" + responseJSON["error"]);
+          } else if ("breed" in responseJSON) {
+            displayResult("It looks like it's a\n" + responseJSON["error"]);
+          } else {
+            displayResult(
+              "Something went wrong!\n" + "but we don't know what it is!"
+            );
+          }
         })
         .catch(error => {
-          detectButton.innerText = "detect";
-          spinner.className = spinner.className + " hidden";
-          console.log(error);
+          displayResult(
+            "Something went wrong!\n" + "but we don't know what it is!"
+          );
         });
+    }
+
+    function displayResult(message) {
+      spinner.className = spinner.className + " hidden";
+      detectButton.className = detectButton.className + " hidden";
+      detectButton.innerText = "detect";
+      detectAnotherButton.className = detectAnotherButton.className.replace(
+        "hidden",
+        ""
+      );
+      resultPane.textContent = message;
+      resultPane.className = resultPane.className.replace("hidden", "");
     }
     function detectAnother(e) {
       detectAnotherButton.className = detectAnotherButton.className + " hidden";
