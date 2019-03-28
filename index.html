@@ -15,13 +15,21 @@
       </div>
 
       <label
-        id="dog-image-dropzone"
+        id="dropzone"
         for="image"
-        class="block text-grey-darker my-4 mx-auto py-32 border-4 border-dashed border-my-orange w-2/3 text-center bg-cover bg-center bg-no-repeat"
+        class="relative block text-grey-darker my-4 mx-auto py-32 border-4 border-dashed border-my-orange w-2/3 text-center bg-cover bg-center bg-no-repeat"
         ondrop="dropHandler(event)"
         ondragover="dragoverHadler(event)"
-        >Click or drop a file to upload your dog's photo</label
       >
+        <img
+          id="spinner"
+          src="./static/img/spinner.gif"
+          class="hidden absolute m-auto pin-x pin-y"
+        />
+        <span id="dropzone-text"
+          >Click or drop a file to upload your dog's photo</span
+        >
+      </label>
       <input
         type="file"
         name="image"
@@ -58,7 +66,9 @@
     })();
 
     const imageFileElement = document.getElementById("image");
-    const dropzone = document.getElementById("dog-image-dropzone");
+    const dropzone = document.getElementById("dropzone");
+    const dropzoneText = document.getElementById("dropzone-text");
+    const spinner = document.getElementById("spinner");
     const resultPane = document.getElementById("result");
     const detectButton = document.getElementById("detect-button");
     const detectAnotherButton = document.getElementById(
@@ -66,7 +76,7 @@
     );
 
     function clickHandler(e) {
-      dropzone.textContent = "                                    ";
+      dropzoneText.innerText = "                                    ";
       dropzone.style.backgroundImage = `url("${URL.createObjectURL(
         imageFileElement.files[0]
       )}")`;
@@ -95,8 +105,10 @@
       e.preventDefault();
       const data = new FormData();
       data.append("image", imageFileElement.files[0]);
-
-      fetch("REPLACE_DETECTOR_ADDRESS", {
+      detectButton.disabled = true;
+      detectButton.innerText = "detecting...";
+      spinner.className = spinner.className.replace("hidden", "");
+      fetch("https://dogs.amr.elbeleidy.me/detect", {
         // "REPLACE_DETECTOR_ADDRESS"
         // "https://dogs.amr.elbeleidy.me/detect"
         method: "POST",
@@ -104,7 +116,9 @@
       })
         .then(response => response.json())
         .then(responseJSON => {
+          spinner.className = spinner.className + " hidden";
           detectButton.className = detectButton.className + " hidden";
+          detectButton.innerText = "detect";
           detectAnotherButton.className = detectAnotherButton.className.replace(
             "hidden",
             ""
@@ -113,15 +127,21 @@
             "It looks like it's a " + responseJSON.breed_detected;
           resultPane.className = resultPane.className.replace("hidden", "");
         })
-        .catch(error => console.log(error));
+        .catch(error => {
+          detectButton.innerText = "detect";
+          spinner.className = spinner.className + " hidden";
+          console.log(error);
+        });
     }
     function detectAnother(e) {
       detectAnotherButton.className = detectAnotherButton.className + " hidden";
       resultPane.className = resultPane.className + " hidden";
       detectButton.className = detectButton.className.replace("hidden", "");
+      detectButton.disabled = false;
       imageFileElement.files = null;
       dropzone.style.backgroundImage = "";
-      dropzone.textContent = "Click or drop a file to upload your dog's photo";
+      dropzoneText.innerText =
+        "Click or drop a file to upload your dog's photo";
     }
   </script>
 </html>
