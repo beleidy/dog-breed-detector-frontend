@@ -105,9 +105,9 @@
       detectButton.disabled = true;
       detectButton.innerText = "detecting...";
       spinner.className = spinner.className.replace("hidden", "");
-      fetch("https://dogs.amr.elbeleidy.me/detect", {
-        // "REPLACE_DETECTOR_ADDRESS"
-        // "https://dogs.amr.elbeleidy.me/detect"
+      fetch("REPLACE_DETECTOR_ADDRESS", {
+        // "REPLACE_DETECTOR_ADDRESS" -- use this if you are serving using included nginx.conf
+        // "https://dogs.amr.elbeleidy.me/detect" -- otherwise hardcode the address
         method: "POST",
         body: data
       })
